@@ -16,20 +16,23 @@ passport.use(
       callbackURL: "/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
-      let user = await User.findOne({ providerId: profile.id });
-      if (!user) {
-        const email = profile.emails ? profile.emails[0].value : `${profile.id}@google.com`;
+      try {
+        let user = await User.findOne({ providerId: profile.id });
+        if (!user) {
+          const email = profile.emails ? profile.emails[0].value : `${profile.id}@google.com`;
 
-        user = await User.create({
-          providerId: profile.id,
-          provider: "google",
-          name: profile.displayName,
-          email: email
-        });
-      }
+          user = await User.create({
+            providerId: profile.id,
+            provider: "google",
+            name: profile.displayName,
+            email: email
+          });
+        }
       return done(null, user);
+    } catch (err) {
+      return done(err);
     }
-  )
+  })
 );
 
 // Local Strategy for email and password
