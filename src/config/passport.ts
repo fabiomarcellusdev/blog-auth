@@ -35,37 +35,6 @@ passport.use(
   })
 );
 
-// Local Strategy for email and password
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: "email",
-      passwordField: "password",
-    },
-    async (email, password, done) => {
-      try {
-        const user = await User.findOne({ email });
-        if (!user) {
-          return done(null, false, { message: "Incorrect email." });
-        }
-
-        if(!user.password) {
-          return done(null, false, { message: "Password required." });
-        }
-
-        const isMatch = await argon2.verify(user.password, password);
-        if (!isMatch) {
-          return done(null, false, { message: "Incorrect password." });
-        }
-
-        return done(null, user);
-      } catch (err) {
-        return done(err);
-      }
-    }
-  )
-);
-
 passport.serializeUser((user, done) => done(null, user._id));
 passport.deserializeUser(async (id, done) => {
   const user = await User.findById(id);
