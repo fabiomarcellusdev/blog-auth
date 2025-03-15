@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 import User from "../models/User";
+import { IUser } from "../types/User";
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -33,7 +34,7 @@ passport.use(
   })
 );
 
-passport.serializeUser((user, done) => done(null, user._id));
+passport.serializeUser((user, done) => done(null, (user as IUser)._id));
 passport.deserializeUser(async (id, done) => {
   const user = await User.findById(id);
   done(null, user);
