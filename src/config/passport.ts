@@ -1,7 +1,5 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { Strategy as LocalStrategy } from "passport-local";
-import argon2 from "argon2";
 
 import User from "../models/User";
 const dotenv = require("dotenv");
@@ -41,4 +39,4 @@ passport.deserializeUser(async (id, done) => {
   done(null, user);
 });
 
-module.exports = passport;
+export default passport;
