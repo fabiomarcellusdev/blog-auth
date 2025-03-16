@@ -1,7 +1,7 @@
-import IUser from "./User.js";
+import UserEntity from "../entity/User";
 
 declare global {
-  namespace Express {
-    interface User extends IUser {}
-  }
+    namespace Express {
+        interface User extends UserEntity {}
+    }
 }
