@@ -16,8 +16,8 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(passport.initialize());
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 // Global Error Handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -27,9 +27,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     if (!req.secure) {
-      return res.redirect(`https://${req.headers.host}${req.url}`);
+        return res.redirect(`https://${req.headers.host}${req.url}`);
     }
     next();
-  });
+});
 
 export default app;
