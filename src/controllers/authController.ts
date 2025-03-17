@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../entity/User";
+import dotenv from "dotenv";
 
-require("dotenv").config();
+dotenv.config();
 
 export const googleAuthSuccess = (req: Request, res: Response) => {
     if (!req.user) {

@@ -3,8 +3,9 @@ import connectDB from "./config/database";
 import fs from "fs";
 import https from "https";
 import "reflect-metadata";
+import dotenv from "dotenv";
 
-require("dotenv").config();
+dotenv.config();
 
 const options = {
     key: fs.readFileSync(process.env.SSL_KEY_PATH as string),
