@@ -7,6 +7,7 @@ import passport from "./config/passport";
 
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
+import errorHandler from "./middleware/errorHandler";
 const app = express();
 
 app.use(express.json());
@@ -20,10 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 
 // Global Error Handler
-app.use((err: Error, req: Request, res: Response) => {
-    console.error(err.stack);
-    res.status(500).json({ error: "Internal Server Error" });
-});
+app.use(errorHandler);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     if (!req.secure) {
