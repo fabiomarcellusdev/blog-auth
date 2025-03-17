@@ -3,6 +3,7 @@ import passport from "../config/passport";
 import {
     googleAuthSuccess,
     googleAuthFailure,
+    loginWithEmailAndPassword,
 } from "../controllers/authController";
 
 const router = express.Router();
@@ -23,5 +24,7 @@ router.get(
 );
 
 router.get("/google/failure", googleAuthFailure);
+
+router.get("/login", loginWithEmailAndPassword);
 
 export default router;
