@@ -1,9 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../entity/User";
 import dotenv from "dotenv";
 import { loginWithEmail } from "../services/authService";
-import { ResponseError } from "../types/responseError";
 
 dotenv.config();
 
@@ -33,7 +32,8 @@ export const googleAuthFailure = (req: Request, res: Response) => {
 
 export const loginWithEmailAndPassword = async (
     req: Request,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     const { email, password } = req.body;
 
@@ -42,10 +42,6 @@ export const loginWithEmailAndPassword = async (
         res.cookie("jwt", token, jwtOptions);
         res.status(200).json({ message: "Login successful", userDetails });
     } catch (error: unknown) {
-        if (error instanceof ResponseError) {
-            res.status(error.status).json({ message: error.message });
-        } else {
-            res.status(500).json({ message: "Internal server error" });
-        }
+        next(error);
     }
 };
