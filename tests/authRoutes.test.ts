@@ -3,9 +3,11 @@ import app from "../src/app";
 import argon2 from "argon2";
 import { AppDataSource } from "../src/config/database";
 import { User } from "../src/entity/User";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../src/utils/constants";
 
 beforeAll(async () => {
     await AppDataSource.initialize();
+    await AppDataSource.synchronize();
 });
 
 afterAll(async () => {
@@ -16,8 +18,8 @@ beforeEach(async () => {
     await AppDataSource.getRepository(User).clear(); // Clear the users table before each test
 });
 
-describe("Auth Routes", () => {
-    describe("POST /api/auth/register", () => {
+describe("User Routes", () => {
+    describe("POST /api/user/register", () => {
         it("should create a new user and return 201", async () => {
             const newUser = {
                 name: "New User",
@@ -26,13 +28,13 @@ describe("Auth Routes", () => {
             };
 
             const response = await request(app)
-                .post("/api/auth/register")
+                .post("/api/user/register")
                 .send(newUser);
 
             expect(response.status).toBe(201);
             expect(response.body).toHaveProperty(
                 "message",
-                "User registered successfully"
+                SUCCESS_MESSAGES.USER_REGISTERED
             );
 
             // Verify the user was created in the database
@@ -42,6 +44,10 @@ describe("Auth Routes", () => {
             expect(user).not.toBeNull();
             expect(user?.name).toBe(newUser.name);
             expect(user?.email).toBe(newUser.email);
+            expect(user?.password).not.toBe(newUser.password); // Password should be hashed
+            expect(user?.role).toBe("user");
+            expect(user?.isVerified).toBe(false);
+
             const isPasswordValid = await argon2.verify(
                 user?.password as string,
                 newUser.password
@@ -50,52 +56,67 @@ describe("Auth Routes", () => {
         });
 
         it("should return 400 if email is already in use", async () => {
-            const existingUser = new User();
-            existingUser.name = "Existing User";
-            existingUser.email = "existinguser@example.com";
-            existingUser.password = await argon2.hash("password");
-            await existingUser.save();
-
             const newUser = {
                 name: "New User",
                 email: "existinguser@example.com",
                 password: "password",
             };
 
-            const response = await request(app)
-                .post("/api/auth/register")
+            const newUserResponse = await request(app)
+                .post("/api/user/register")
                 .send(newUser);
 
-            expect(response.status).toBe(400);
-            expect(response.body).toHaveProperty(
+            expect(newUserResponse.status).toBe(201);
+            expect(newUserResponse.body).toHaveProperty(
                 "message",
-                "Email already in use"
+                SUCCESS_MESSAGES.USER_REGISTERED
+            );
+
+            const existingUserResponse = await request(app)
+                .post("/api/user/register")
+                .send(newUser);
+
+            expect(existingUserResponse.status).toBe(400);
+            expect(existingUserResponse.body).toHaveProperty(
+                "message",
+                ERROR_MESSAGES.EMAIL_ALREADY_IN_USE
             );
         });
     });
+});
 
+describe("Auth Routes", () => {
     describe("POST /api/auth/login", () => {
         it("should return 200 and a token for valid credentials", async () => {
-            // Create a test user
-            const user = new User();
-            user.name = "Test User";
-            user.email = "test@example.com";
-            user.password = await argon2.hash("password");
-            await user.save();
+            const newUser = {
+                name: "Test User",
+                email: "test@example.com",
+                password: "password",
+            };
+
+            const createdUserResponse = await request(app)
+                .post("/api/user/register")
+                .send(newUser);
+
+            expect(createdUserResponse.status).toBe(201);
 
             const response = await request(app)
                 .post("/api/auth/login")
-                .send({ email: "test@example.com", password: "password" });
+                .send({ email: newUser.email, password: newUser.password });
 
             expect(response.status).toBe(200);
+            expect(response.body).toHaveProperty(
+                "message",
+                SUCCESS_MESSAGES.USER_LOGGED_IN
+            );
             expect(response.body).toHaveProperty("userDetails");
             expect(response.body.userDetails).toHaveProperty(
                 "name",
-                "Test User"
+                newUser.name
             );
             expect(response.body.userDetails).toHaveProperty(
                 "email",
-                "test@example.com"
+                newUser.email
             );
         });
 
@@ -107,7 +128,7 @@ describe("Auth Routes", () => {
             expect(response.status).toBe(401);
             expect(response.body).toHaveProperty(
                 "message",
-                "Invalid email or password."
+                ERROR_MESSAGES.INVALID_EMAIL_OR_PASSWORD
             );
         });
     });
