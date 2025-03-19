@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../entity/User";
 import dotenv from "dotenv";
 import { loginWithEmail } from "../services/authService";
+import { SUCCESS_MESSAGES } from "../utils/constants";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ export const googleAuthSuccess = (req: Request, res: Response) => {
 };
 
 export const googleAuthFailure = (req: Request, res: Response) => {
-    res.status(401).redirect("/login?error=Google%20Auth%20Failed");
+    res.redirect("/login?error=Google%20Auth%20Failed");
 };
 
 export const loginWithEmailAndPassword = async (
@@ -40,7 +41,10 @@ export const loginWithEmailAndPassword = async (
     try {
         const { token, userDetails } = await loginWithEmail(email, password);
         res.cookie("jwt", token, jwtOptions);
-        res.status(200).json({ message: "Login successful", userDetails });
+        res.status(200).json({
+            message: SUCCESS_MESSAGES.USER_LOGGED_IN,
+            userDetails,
+        });
     } catch (error: unknown) {
         next(error);
     }
