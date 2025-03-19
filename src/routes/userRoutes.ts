@@ -1,8 +1,9 @@
 import express from "express";
-import { registerWithEmail } from "../controllers/userController";
+import { register, verifyEmail } from "../controllers/userController";
 
 const router = express.Router();
 
-router.post("/registerWithEmail", registerWithEmail);
+router.post("/register", register);
+router.get("/verify-email", verifyEmail);
 
 export default router;

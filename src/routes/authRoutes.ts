@@ -25,6 +25,6 @@ router.get(
 
 router.get("/google/failure", googleAuthFailure);
 
-router.get("/login", loginWithEmailAndPassword);
+router.post("/login", loginWithEmailAndPassword);
 
 export default router;
