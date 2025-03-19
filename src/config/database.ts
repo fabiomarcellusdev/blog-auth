@@ -1,4 +1,5 @@
 import { DataSource } from "typeorm";
+import fs from "fs";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -10,11 +11,16 @@ const AppDataSource = new DataSource({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    synchronize: true,
+    synchronize: false,
     logging: true,
     entities: ["src/entity/**/*.ts"],
     migrations: ["src/migration/**/*.ts"],
     subscribers: ["src/subscriber/**/*.ts"],
+    ssl: {
+        rejectUnauthorized: true,
+        requestCert: true,
+        ca: fs.readFileSync(process.env.PATH_TO_CA_CERT as string).toString(),
+    },
 });
 
 const connectDB = async () => {
