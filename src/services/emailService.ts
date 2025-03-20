@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const sendVerificationEmail = async (
     email: string,
     name: string,
