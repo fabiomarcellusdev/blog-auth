@@ -8,7 +8,7 @@ export const ERROR_MESSAGES = {
     DATABASE_ERROR: "Database error occurred.",
     INTERNAL_SERVER_ERROR: "Internal server error.",
     INVALID_TOKEN: "Invalid Token.",
-    FAILED_TO_SEND_EMAIL: "Failed to send email.",
+    FAILED_VERIFICATION_EMAIL: "Failed to send email.",
 };
 
 export const SUCCESS_MESSAGES = {
@@ -17,4 +17,5 @@ export const SUCCESS_MESSAGES = {
     USER_UPDATED: "User updated successfully.",
     USER_DELETED: "User deleted successfully.",
     EMAIL_VERIFIED: "Email verified successfully.",
+    VERIFICATION_EMAIL_SENT: "Verification email sent successfully.",
 };

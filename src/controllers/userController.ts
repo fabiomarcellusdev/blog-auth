@@ -4,6 +4,7 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../utils/constants";
 import { ResponseError } from "../types/responseError";
 import jwt from "jsonwebtoken";
 import { User } from "../entity/User";
+import { sendVerificationEmail } from "../services/emailService";
 
 export const register = async (
     req: Request,
@@ -13,9 +14,14 @@ export const register = async (
     const { name, email, password } = req.body;
 
     try {
-        await registerUserWithEmail(name, email, password);
-        // await sendVerificationEmail(email, token);
+        const token = await registerUserWithEmail(name, email, password);
         res.status(201).json({ message: SUCCESS_MESSAGES.USER_REGISTERED });
+
+        try {
+            await sendVerificationEmail(email, name, token);
+        } catch (emailError: unknown) {
+            console.error("Failed to send verification email:", emailError);
+        }
     } catch (error: unknown) {
         next(error);
     }
