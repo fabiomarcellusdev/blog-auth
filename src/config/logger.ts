@@ -1,5 +1,7 @@
 import { createLogger, format, transports } from "winston";
 import WinstonCloudWatch from "winston-cloudwatch";
+// not used directly in code but winston-cloudwatch relies on it
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import AWS from "aws-sdk";
 
 const isProduction = process.env.NODE_ENV === "production";
