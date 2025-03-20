@@ -27,6 +27,7 @@ passport.use(
                         provider: "google",
                         name: profile.displayName,
                         email: email,
+                        isVerified: true,
                     });
                 }
                 return done(null, user);
