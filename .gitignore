@@ -7,3 +7,4 @@ dist
 *.crt
 *.pfx
 *.csr
+logs
