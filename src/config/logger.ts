@@ -28,7 +28,7 @@ if (isProduction) {
             logStreamName: process.env.CLOUDWATCH_LOG_STREAM,
             awsRegion: process.env.AWS_REGION,
             awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            awsSecretKey: process.env.AWS_SECRET_ACCESS_KEY,
             messageFormatter: ({ level, message, timestamp }) => {
                 return `${timestamp} [${level}]: ${message}`;
             },
